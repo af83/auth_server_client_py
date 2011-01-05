@@ -4,6 +4,17 @@
 
 Python lib to use [AuthServer](https://github.com/af83/auth_server) for authentication and authorization in your applications.
 
+Tested with Python 2.5 and 2.6.
+
+## Instalation
+
+    python setup.py install
+
+
+### To run tests
+
+    nosetests
+
 
 ## License
 

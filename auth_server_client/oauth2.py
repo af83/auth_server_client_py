@@ -62,7 +62,7 @@ def process_code(code):
     - code: the OAuth2 code issued by AuthServer and passed through the end-user.
 
   """
-  # TODO: client_secret in headers.
+  # XXX: client_secret might have to go in headers (cf. OAuth2 protocol).
   args = dict(client_id=CLIENT_ID, 
               redirect_uri=REDIRECT_URI,
               client_secret=CLIENT_SECRET,
@@ -87,11 +87,13 @@ def get_authorizations(access_token):
     - access_token: the OAuth2 access_token given by AuthServer.
 
   """
-  # TODO: access token in headers
+  # XXX: access token might have to be in headers (cf. OAuth2 protocol).
   url = '%s?oauth_token=%s' % (AUTHS_URL, access_token)
   try:
     res = urllib.urlopen(url).read()
     return json.loads(res)
-  except (IOError, ValueError), err:
-    raise ValueError('Invalid answer from AuthServer: %s\n%s' % (err, res))
+  except IOError, err:
+    raise ValueError('Invalid answer from AuthServer: %s' % err)
+  except ValueError, err:
+    raise ValueError('Invalid answer from AuthServer: %s\n%s' % (err, res))    
 

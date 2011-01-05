@@ -3,6 +3,12 @@ from setuptools import setup
 PACKAGE = 'AuthServerClient'
 VERSION = '0.0.1'
 
+additional_requires = []
+try:
+  import json
+except ImportError:
+  additional_requires.append('simplejson==2.1.2')
+
 setup(
   name=PACKAGE,
   version=VERSION,
@@ -15,6 +21,7 @@ setup(
   include_package_data = True,
   package_data={},
   install_requires = [
-  ],
+    'nose==1.0.0',
+  ] + additional_requires,
 )
 
