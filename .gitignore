@@ -1,0 +1,4 @@
+AuthServerClient.egg-info/*
+dist/*
+build/*
+
