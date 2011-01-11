@@ -22,9 +22,8 @@ setup(
   include_package_data = True,
   test_suite='nose.collector',
   package_data={},
-  install_requires = [
-    'nose==1.0.0',
-  ] + additional_requires,
+  install_requires = [] + additional_requires,
+  extras_require = {'test' : ['nose==1.0.0']},
   dependency_links=[],
   classifiers=[
     "Development Status :: 3 - Alpha",
@@ -34,6 +33,5 @@ setup(
     "Topic :: Internet :: WWW/HTTP :: WSGI",
     "Topic :: Software Development :: Libraries :: Python Modules",
   ],
-  extras_require = {},
 )
 
