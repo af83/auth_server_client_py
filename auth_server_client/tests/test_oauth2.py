@@ -112,7 +112,10 @@ class GetAuthorizationsTest(URLOpenTest):
 
   def setUp(self):
     oauth2.AUTHS_URL = "http://authserver/auth"
-    self.furlopen_url = "http://authserver/auth?oauth_token=token"
+    querystring = urllib.urlencode({"oauth_token": "token",
+                                    "domain": "trac.example.com",
+                                    "authority": "example.com"})
+    self.furlopen_url = "http://authserver/auth?%s" % (querystring)
     self.furlopen_qs = None
     self.original_urlopen = urllib.urlopen
     urllib.urlopen = self.fake_urlopen
@@ -122,12 +125,13 @@ class GetAuthorizationsTest(URLOpenTest):
 
   def test_ioerror(self):
     self.furlopen_result = IOError('No internet')
-    self.assertRaises(ValueError, oauth2.get_authorizations, 'token')
+    self.assertRaises(ValueError, oauth2.get_authorizations, 'token',
+                      'example.com', 'trac.example.com')
 
   def test_invalid_json(self):
     self.furlopen_result = StringIO('invalid JSON')
-    self.assertRaises(ValueError, oauth2.get_authorizations, 'token')
+    self.assertRaises(ValueError, oauth2.get_authorizations, 'token',
+                      'example.com', 'trac.example.com')
   
   def test_ok(self):
     self.furlopen_result = StringIO('{"email": "toto"}')
-

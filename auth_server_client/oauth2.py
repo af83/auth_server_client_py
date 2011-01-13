@@ -79,16 +79,21 @@ def process_code(code):
   return data.get('access_token')
 
 
-def get_authorizations(access_token):
+def get_authorizations(access_token, authority, domain):
   """Get the authorizations and info associated to the given access_token.
   Will raise a ValueError if invalid response from AuthServer.
 
   Arguments:
     - access_token: the OAuth2 access_token given by AuthServer.
+    - authority: authority host, where to get the portable contacts.
+    - domain: domain host (to get the user userid for).
 
   """
   # XXX: access token might have to be in headers (cf. OAuth2 protocol).
-  url = '%s?oauth_token=%s' % (AUTHS_URL, access_token)
+  querystring = urllib.urlencode({'oauth_token': access_token,
+                                  'authority': authority,
+                                  'domain': domain})
+  url = '%s?%s' % (AUTHS_URL, querystring)
   try:
     res = urllib.urlopen(url).read()
     return json.loads(res)
