@@ -13,6 +13,8 @@ CLIENT_SECRET = None
 AUTHORIZE_URL = None
 TOKEN_URL = None
 AUTHS_URL = None
+AUTHORITY = None
+DOMAIN = None
 
 # This is only usefull for middleware:
 LOGIN_PATH = None
@@ -21,17 +23,21 @@ PROCESS_PATH = None
 
 
 def init(client_id, redirect_uri, client_secret, authorize_url, token_url, 
-         auths_url, login_path=None, logout_path=None, process_path=None):
+         auths_url, authority, domain,
+         login_path=None, logout_path=None, process_path=None):
   """Init module variables.
   """
   global CLIENT_ID, REDIRECT_URI, CLIENT_SECRET, AUTHORIZE_URL, TOKEN_URL, \
-         AUTHS_URL, LOGIN_PATH, LOGOUT_PATH, PROCESS_PATH, AUTHS_URL
+         AUTHS_URL, AUTHORITY, DOMAIN, \
+         LOGIN_PATH, LOGOUT_PATH, PROCESS_PATH, AUTHS_URL
   CLIENT_ID = client_id
   REDIRECT_URI = redirect_uri
   CLIENT_SECRET = client_secret
   AUTHORIZE_URL = authorize_url
   TOKEN_URL = token_url
   AUTHS_URL = auths_url
+  AUTHORITY = authority
+  DOMAIN = domain
   
   LOGIN_PATH = login_path
   LOGOUT_PATH = logout_path
@@ -79,20 +85,18 @@ def process_code(code):
   return data.get('access_token')
 
 
-def get_authorizations(access_token, authority, domain):
+def get_authorizations(access_token):
   """Get the authorizations and info associated to the given access_token.
   Will raise a ValueError if invalid response from AuthServer.
 
   Arguments:
     - access_token: the OAuth2 access_token given by AuthServer.
-    - authority: authority host, where to get the portable contacts.
-    - domain: domain host (to get the user userid for).
 
   """
   # XXX: access token might have to be in headers (cf. OAuth2 protocol).
   querystring = urllib.urlencode({'oauth_token': access_token,
-                                  'authority': authority,
-                                  'domain': domain})
+                                  'authority': AUTHORITY,
+                                  'domain': DOMAIN})
   url = '%s?%s' % (AUTHS_URL, querystring)
   try:
     res = urllib.urlopen(url).read()

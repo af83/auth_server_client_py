@@ -11,7 +11,7 @@ from auth_server_client import oauth2
 class InitTest(TestCase):
 
   args = ['client_id', 'redirect_uri', 'client_secret', 'authorize_url',
-          'token_url', 'auths_url', 'login_path', 'logout_path',
+          'token_url', 'auths_url', 'authority', 'domain', 'login_path', 'logout_path',
           'process_path']
 
   def test_init_optionals(self):
@@ -19,7 +19,8 @@ class InitTest(TestCase):
     oauth2.init(*self.args[:-3])
     self.assertEqual([oauth2.CLIENT_ID, oauth2.REDIRECT_URI, 
                       oauth2.CLIENT_SECRET, oauth2.AUTHORIZE_URL,
-                      oauth2.TOKEN_URL, oauth2.AUTHS_URL, 
+                      oauth2.TOKEN_URL, oauth2.AUTHS_URL,
+                      oauth2.AUTHORITY, oauth2.DOMAIN,
                       oauth2.LOGIN_PATH, oauth2.LOGOUT_PATH,
                       oauth2.PROCESS_PATH],
                      self.args[:-3] + [None, None, None])
@@ -29,7 +30,8 @@ class InitTest(TestCase):
     oauth2.init(*self.args)
     self.assertEqual([oauth2.CLIENT_ID, oauth2.REDIRECT_URI, 
                       oauth2.CLIENT_SECRET, oauth2.AUTHORIZE_URL,
-                      oauth2.TOKEN_URL, oauth2.AUTHS_URL, 
+                      oauth2.TOKEN_URL, oauth2.AUTHS_URL,
+                      oauth2.AUTHORITY, oauth2.DOMAIN,
                       oauth2.LOGIN_PATH, oauth2.LOGOUT_PATH,
                       oauth2.PROCESS_PATH], self.args)
 
@@ -75,6 +77,8 @@ class ProcessCodeTest(URLOpenTest):
     oauth2.REDIRECT_URI = "http://me/oauth2/process"
     oauth2.AUTHORIZE_URL = "http://authserver/oauth2/auth"
     oauth2.CLIENT_SECRET = "somesecret"
+    oauth2.AUTHORITY = "example.com"
+    oauth2.DOMAIN = "trac.example.com"
     self.furlopen_url = "http://authserver/token"
     self.furlopen_qs = ("client_secret=somesecret&code=code&"
                         "grant_type=authorization_code&"
@@ -112,6 +116,8 @@ class GetAuthorizationsTest(URLOpenTest):
 
   def setUp(self):
     oauth2.AUTHS_URL = "http://authserver/auth"
+    oauth2.AUTHORITY = "example.com"
+    oauth2.DOMAIN = "trac.example.com"
     querystring = urllib.urlencode({"oauth_token": "token",
                                     "domain": "trac.example.com",
                                     "authority": "example.com"})
@@ -125,13 +131,13 @@ class GetAuthorizationsTest(URLOpenTest):
 
   def test_ioerror(self):
     self.furlopen_result = IOError('No internet')
-    self.assertRaises(ValueError, oauth2.get_authorizations, 'token',
-                      'example.com', 'trac.example.com')
+    self.assertRaises(ValueError, oauth2.get_authorizations, 'token')
 
   def test_invalid_json(self):
     self.furlopen_result = StringIO('invalid JSON')
-    self.assertRaises(ValueError, oauth2.get_authorizations, 'token',
-                      'example.com', 'trac.example.com')
+    self.assertRaises(ValueError, oauth2.get_authorizations, 'token')
   
   def test_ok(self):
-    self.furlopen_result = StringIO('{"email": "toto"}')
+    self.furlopen_result = StringIO('{"userid": "toto"}')
+    self.assertEqual({'userid': 'toto'}, oauth2.get_authorizations('token'))
+
