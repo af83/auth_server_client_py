@@ -1,7 +1,7 @@
 from setuptools import setup
 
 PACKAGE = 'AuthServerClient'
-VERSION = '0.0.1'
+VERSION = '0.0.2'
 
 additional_requires = []
 try:
