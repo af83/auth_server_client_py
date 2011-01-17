@@ -1,13 +1,13 @@
 from setuptools import setup
 
 PACKAGE = 'AuthServerClient'
-VERSION = '0.0.2'
+VERSION = '0.0.3'
 
 additional_requires = []
 try:
   import json
 except ImportError:
-  additional_requires.append('simplejson==2.1.2')
+  additional_requires.append('simplejson>=2.1.2')
 
 setup(
   name=PACKAGE,
